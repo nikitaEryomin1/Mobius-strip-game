@@ -1,4 +1,4 @@
-﻿using System.Collections;
+﻿﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -30,9 +30,10 @@ public static class WorldPhysics
         float halfTerWidth = Mathf.Sqrt(SQ_HALF_TER_WIDTH);
         //сопротивление максимально при утоплении в грунт для демпфирования колебаний при приземлениях, с высотой убывает по параболе:
         float dragCoef = GetDepth(position) > 0.0 ? MAX_DRAG_COEF : MAX_DRAG_COEF * Mathf.Pow((halfTerWidth - GetUnsignedLocalHeight(position)) / halfTerWidth, 4);
-        Vector3 dragAccel = velocity * dragCoef; //аэродинамическое сопротивление, действует только возле ленты        
-        if (depth > 0) return GetLocalGravity(position) * (GROUND_ELASTIC_COEF * depth) + dragAccel;
-        return GetLocalGravity(position) * GRAVITY_COEF + dragAccel;
+        Vector3 dragAccel = velocity * dragCoef; //аэродинамическое сопротивление, действует только возле ленты 
+        Vector3 localGravityDir = GetLocalGravity(position);  
+        if (depth > 0) return localGravityDir * (GROUND_ELASTIC_COEF * depth + GRAVITY_COEF) + dragAccel;
+        return localGravityDir * GRAVITY_COEF + dragAccel;
     }
 
     static public float GetDepth(Vector3 position)
